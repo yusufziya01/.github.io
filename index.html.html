@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Shorts AI Studio — İlk Prototip</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1120;--panel:#121c2f;--panel2:#1b2940;--text:#f4f7fb;--muted:#aab8ce;--accent:#ef4444;--line:#2b3a52}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#182944 0,#0b1120 45%);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);min-height:100vh}
+.wrap{max-width:1000px;margin:auto;padding:24px 16px 50px}.top{display:flex;align-items:center;gap:12px;margin-bottom:24px}.logo{width:48px;height:48px;display:grid;place-items:center;background:var(--accent);border-radius:15px;font-size:24px}.sub{color:var(--muted);font-size:14px;margin-top:4px}h1{font-size:clamp(23px,4vw,32px);margin:0}h2{font-size:19px;margin:0 0 14px}.tag{margin-left:auto;border:1px solid #52647e;color:#d8e2f1;padding:6px 10px;border-radius:99px;font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:rgba(18,28,47,.94);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 32px #0002}
+label{display:block;font-size:14px;font-weight:650;margin:15px 0 8px}textarea,select,input{width:100%;border:1px solid #3a4a64;background:#0c1525;color:var(--text);border-radius:12px;padding:12px 13px;font:inherit;outline:none}textarea{min-height:115px;resize:vertical}textarea:focus,select:focus,input:focus{border-color:#f87171}select{min-height:46px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.checks{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.pill{background:var(--panel2);border:1px solid #33445e;border-radius:99px;padding:8px 11px;color:#e3ebf7;font-size:13px}.btn{border:0;background:var(--accent);color:white;border-radius:12px;padding:13px 16px;font:inherit;font-weight:750;cursor:pointer;width:100%;margin-top:18px}.btn:hover{filter:brightness(1.08)}.btn.secondary{background:#26364e;border:1px solid #3b4b65}.hint{font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px}.result{display:none}.result.show{display:block}.result-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.result-head h2{margin:0}.copy{background:#26364e;border:1px solid #3b4b65;color:white;border-radius:10px;padding:9px 12px;cursor:pointer}.output{white-space:pre-wrap;line-height:1.65;font-size:14px;color:#e4ebf5}.notice{padding:12px;border-radius:12px;background:#17263c;color:#bdcbe0;font-size:13px;line-height:1.5;margin-top:18px}.footer{text-align:center;color:#8fa0b9;font-size:12px;margin-top:22px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.wrap{padding:18px 12px 35px}.card{padding:17px}.tag{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">🎬</div>
+    <div><h1>Shorts AI Studio</h1><div class="sub">Yapay zekâ destekli kısa video planlayıcısı</div></div>
+    <div class="tag">İlk prototip · v0.1</div>
+  </header>
+  <main class="grid">
+    <section class="card">
+      <h2>Video fikrini oluştur</h2>
+      <label for="topic">Video konusu</label>
+      <textarea id="topic" placeholder="Örn. Bir futbolcu uzayda inanılmaz bir gol atıyor...">Bir futbolcu uzayda inanılmaz bir gol atıyor</textarea>
+      <div class="row">
+        <div><label for="duration">Video süresi</label><select id="duration"><option>15 saniye</option><option selected>30 saniye</option><option>45 saniye</option><option>60 saniye</option></select></div>
+        <div><label for="style">Video tarzı</label><select id="style"><option value="surprise">Şaşırtıcı</option><option value="funny">Komik</option><option value="cinematic">Sinematik</option><option value="cartoon">2D animasyon</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="language">Çıktı dili</label><select id="language"><option value="Türkçe">Türkçe</option><option value="İngilizce">İngilizce</option></select></div>
+        <div><label for="format">Video formatı</label><select id="format"><option>9:16 dikey</option><option>1:1 kare</option><option>16:9 yatay</option></select></div>
+      </div>
+      <div class="checks"><span class="pill">✓ Konuşmasız</span><span class="pill">✓ Sahne sahne</span><span class="pill">✓ Görsel promptları</span></div>
+      <button class="btn" id="generate">✨ Video planı oluştur</button>
+      <div class="hint">Bu ilk sürüm yerel bir prototiptir. Senaryo şablonlarla hazırlanır; henüz gerçek bir yapay zekâ servisine bağlanmaz.</div>
+    </section>
+    <section class="card result" id="resultCard" aria-live="polite">
+      <div class="result-head"><h2>Video planın</h2><button class="copy" id="copy">Planı kopyala</button></div>
+      <div class="output" id="output"></div>
+      <button class="btn secondary" id="again">Başka bir plan dene</button>
+    </section>
+  </main>
+  <div class="notice"><strong>Sonraki geliştirme:</strong> Gerçek AI API bağlantısı, görsel üretimi, sahneleri videoya dönüştürme ve MP4 dışa aktarma. API anahtarları güvenlik için doğrudan bu HTML dosyasına konmamalı; sunucu tarafında saklanmalıdır.</div>
+  <div class="footer">Shorts AI Studio · Kişisel prototip</div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+function makePlan(){
+  const topic = $('topic').value.trim() || 'Sürpriz bir olay';
+  const duration = $('duration').value;
+  const style = $('style').value;
+  const lang = $('language').value;
+  const format = $('format').value;
+  const styles = {
+    surprise: 'gerilimi yükselten, finalde beklenmedik bir dönüş içeren',
+    funny: 'abartılı mimikler ve fiziksel komedi içeren',
+    cinematic: 'dramatik ışıklandırma ve sinematik kamera hareketleri içeren',
+    cartoon: 'renkli 2D animasyon, esnek hareketler ve belirgin silüetler içeren'
+  };
+  const scenes = [
+    ['0–3 sn', 'KURULUM', `Konuya dair en ilginç nesne veya karakter kadraja girer. Kamera yavaşça yaklaşır; izleyici meraklanır.`],
+    ['3–10 sn', 'BEKLENTİ', `Karakter ${topic.toLowerCase()} fikrini başlatır. Hareketler giderek hızlanır ve görsel ipuçları artar.`],
+    ['10–20 sn', 'ŞAŞIRTICI GELİŞME', `Olay beklenmedik bir şekilde değişir. Kamera hızlı bir yakın plan ve ardından geniş plan kullanır.`],
+    ['20–30 sn', 'SON VURUŞ', `Komik veya şaşırtıcı sonuç ortaya çıkar. Son kare, videonun başına bağlanabilecek şekilde biter.`]
+  ];
+  const isEn = lang === 'İngilizce';
+  let text = `${isEn?'SHORTS VIDEO PLAN':'YOUTUBE SHORTS VİDEO PLANI'}\n`;
+  text += `KONU: ${topic}\nSÜRE: ${duration} | FORMAT: ${format} | TARZ: ${styles[style]}\n\n`;
+  text += `GENEL GÖRSEL STİLİ\n${format}; temiz kompozisyon, güçlü kontrast, tutarlı karakter tasarımı, ${styles[style]}. Diyalog ve ekranda yazı yok; hikâye yalnızca görüntü, müzik ve ses efektleriyle anlatılır.\n\n`;
+  scenes.forEach((s,i)=>{
+    const times = duration==='15 saniye' ? [['0–2 sn','KURULUM'],['2–5 sn','BEKLENTİ'],['5–10 sn','GELİŞME'],['10–15 sn','SON VURUŞ']][i] :
+                  duration==='45 saniye' ? [['0–5 sn','KURULUM'],['5–15 sn','BEKLENTİ'],['15–30 sn','GELİŞME'],['30–45 sn','SON VURUŞ']][i] :
+                  duration==='60 saniye' ? [['0–7 sn','KURULUM'],['7–20 sn','BEKLENTİ'],['20–42 sn','GELİŞME'],['42–60 sn','SON VURUŞ']][i] : [s[0],s[1]];
+    text += `SAHNE ${i+1} — ${times[1]} (${times[0]})\n`;
+    text += `${s[2]}\n`;
+    text += `GÖRSEL PROMPTU: ${topic}; ${styles[style]}; dikey kadraj, net odak, tutarlı karakter ve ortam, yüksek kaliteli 3D/2D görsel anlatım, ${times[0]} anına uygun kompozisyon.\n`;
+    text += `ANİMASYON PROMPTU: Yumuşak kamera yaklaşması, doğal hareket, net başlangıç ve bitiş pozu, sahne sonunda bir sonraki sahneye akıcı geçiş. Diyalog yok.\n`;
+    text += `SES: ${i===2?'Kısa yükselen whoosh ve vurgu efekti':i===3?'Beklenmedik komik vurgu ve kısa bitiş sesi':'Hafif ritmik müzik ve ortama uygun ses efektleri'}.\n\n`;
+  });
+  text += `BAŞLIK ÖNERİSİ\n${topic} 😱 #Shorts\n\n`;
+  text += `AÇIKLAMA\n${topic} fikrinden ilham alan kısa, görsel odaklı bir video. Sonuna kadar izle!\n\n`;
+  text += `HASHTAGLER\n#Shorts #AIvideo #YapayZeka #AIVideo #Viral #${style==='funny'?'Komik':style==='cartoon'?'Animasyon':'Şaşırtıcı'}\n\n`;
+  text += `NOT: Bu çıktı başlangıç taslağıdır. Görsel/video üretimi için ilgili üretim servislerine ayrıca bağlanmak gerekir.`;
+  $('output').textContent = text;
+  $('resultCard').classList.add('show');
+}
+$('generate').addEventListener('click',makePlan);
+$('again').addEventListener('click',makePlan);
+$('copy').addEventListener('click',async()=>{
+  const text = $('output').textContent;
+  try { await navigator.clipboard.writeText(text); $('copy').textContent='Kopyalandı ✓'; }
+  catch(e) { const r=document.createRange();r.selectNode($('output'));const s=window.getSelection();s.removeAllRanges();s.addRange(r);$('copy').textContent='Metni seçtim'; }
+  setTimeout(()=>{$('copy').textContent='Planı kopyala'},1800);
+});
+</script>
+</body>
+</html>
